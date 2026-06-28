@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+
+    <title>Resultados de la simulación</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+
+</head>
+
+<body>
+
+<h2 style="text-align:center">
+Resultados de la proyección
+</h2>
+
+<div style="width:90%;margin:auto">
+
+    <canvas id="graficoIngresos"></canvas>
+
+</div>
+
+<br><br>
+
+<div
+id="graficoPlotly"
+style="width:90%;height:500px;margin:auto;">
+</div>
+
+<script>
+
+const datos = JSON.parse(localStorage.getItem("datosProyeccion"));
+
+
+//=====================
+// CHART.JS
+//=====================
+
+const ctx = document.getElementById("graficoIngresos");
+
+new Chart(ctx,{
+
+    type:"line",
+
+    data:{
+
+        labels:["Periodo Histórico","Periodo Actual"],
+
+        datasets:[{
+
+            label:"Precio",
+
+            data:[
+                datos.precioInicialAnterior,
+                datos.precioInicialActual
+            ],
+
+            borderWidth:3,
+
+            fill:false
+
+        }]
+
+    }
+
+});
+
+
+//=====================
+// PLOTLY
+//=====================
+
+var trace1 = {
+
+    x:[
+        "Histórico",
+        "Actual"
+    ],
+
+    y:[
+        datos.suscripcionesAnterior,
+        datos.suscripcionesActual
+    ],
+
+    mode:'lines+markers',
+
+    type:'scatter',
+
+    name:'Suscripciones Activas'
+
+};
+
+Plotly.newPlot(
+
+'graficoPlotly',
+
+[trace1],
+
+{
+
+title:'Comparación de Suscripciones',
+
+xaxis:{title:'Periodo'},
+
+yaxis:{title:'Cantidad'}
+
+}
+
+);
+
+</script>
+
+</body>
+</html>
