@@ -14,10 +14,14 @@ from Apps.roseApp import forms
 # ----[MATEMATICAS]-------------------
 import sympy as sp
 # '================================================='
-
+from django.shortcuts import render
 # °===========================°
 #    °Vistas -> roseApp
 # °===========================°
+
+
+def resultados(request):
+    return render(request, 'resultados.html')
 
 # Landig page (home)
 def landingPage(request):
