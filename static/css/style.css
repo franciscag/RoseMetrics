@@ -1,0 +1,66 @@
+
+/* Background de NavBar */
+nav.bg-custom-1{
+    background-color: rgb(3, 3, 148) !important;
+}
+
+/* Background hamburguesa HEADER */
+.bg-custom-2-1{
+    background-color: rgba(2, 2, 83, 0.425) !important;
+}
+
+/* Background hamburguesa BODY*/
+.bg-custom-2-2{
+    background-color: rgba(3, 3, 148, 0.212) !important;
+}
+
+/* Negrita */
+.txt-bold{
+    font-weight: bold !important;
+}
+
+
+/* BTN normal */
+.hover-btn {
+    /* mantener los bordes, para evitar bug visual*/
+    border-radius: 1px !important;
+
+    /* vuelve a su estado normal despues de 5s del hover */
+    transition: all 0.5s ease-out !important; 
+}
+
+/* BTN hover */
+.hover-btn:hover {
+    background-color: rgba(11, 11, 66, 0.459) !important;
+    border-top-left-radius: 18px !important;
+    border-top-right-radius: 18px !important;
+    border-bottom-left-radius: 18px !important;
+    border-bottom-right-radius: 18px !important;
+    
+    /* cambia su scale durante el hover */
+    transform: scale(0.92) !important;
+}
+
+
+
+/* LOGO HOVER */
+.logo-wrapper:hover {
+    transform: scale(1.05);
+}
+
+/* BTN CORTE */
+.btn-action-blue {
+    border-radius: 8px;
+}
+
+/* BTN HOVER */
+.btn-action-blue:hover {
+    background-color: #0b5ed7 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 20px rgba(13, 110, 253, 0.3) !important;
+}
+
+/* NEGRITA */
+.fw-extrabold {
+    font-weight: 800;
+}
