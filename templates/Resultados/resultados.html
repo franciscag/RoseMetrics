@@ -98,34 +98,9 @@ Resultados de la Simulación
 
     </div>
 
-    <div class="card shadow">
-
-        <div class="card-header">
-
-            <h5 class="mb-0">
-
-                Elasticidad Precio vs Suscripciones
-
-            </h5>
-
-        </div>
-
-        <div class="card-body">
-
-            <div
-                id="graficoElasticidad"
-                style="height:500px;">
-            </div>
-
-        </div>
-
-    </div>
-
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
 
@@ -147,13 +122,16 @@ console.log(precioActual);
 console.log(clientesAnterior);
 console.log(clientesActual);
 
+//
 // CALCULOS
 //
 
 let crecimiento = 0;
 
-if (ingresoAnterior > 0){
+if (ingresoAnterior > 0) {
+
     crecimiento = ((ingresoActual - ingresoAnterior) / ingresoAnterior) * 100;
+
 }
 
 //
@@ -183,178 +161,81 @@ const proyeccion3 = ingresoActual * 1.22;
 
 new Chart(
 
-document.getElementById("graficoIngresos"),
+    document.getElementById("graficoIngresos"),
 
-{
+    {
 
-type:"line",
+        type: "line",
 
-data:{
+        data: {
 
-labels:[
+            labels: [
 
-"Histórico",
+                "Histórico",
 
-"Actual",
+                "Actual",
 
-"Proyección 1",
+                "Proyección 1",
 
-"Proyección 2",
+                "Proyección 2",
 
-"Proyección 3"
+                "Proyección 3"
 
-],
+            ],
 
-datasets:[{
+            datasets: [{
 
-label:"Ingresos",
+                label: "Ingresos",
 
-data:[
+                data: [
 
-ingresoAnterior,
+                    ingresoAnterior,
 
-ingresoActual,
+                    ingresoActual,
 
-proyeccion1,
+                    proyeccion1,
 
-proyeccion2,
+                    proyeccion2,
 
-proyeccion3
+                    proyeccion3
 
-],
+                ],
 
-borderWidth:4,
+                borderWidth: 4,
 
-fill:true,
+                fill: true,
 
-tension:0.4
+                tension: 0.4
 
-}]
+            }]
 
-},
+        },
 
-options:{
+        options: {
 
-responsive:true,
+            responsive: true,
 
-plugins:{
+            plugins: {
 
-legend:{
+                legend: {
 
-display:true
+                    display: true
 
-},
+                },
 
-title:{
+                title: {
 
-display:true,
+                    display: true,
 
-text:"Curva de Proyección de Ingresos"
+                    text: "Curva de Proyección de Ingresos"
 
-}
+                }
 
-}
+            }
 
-}
+        }
 
-}
-
-);
-
-//
-// GRAFICO ELASTICIDAD
-//
-
-const precios = [];
-const usuarios = [];
-
-// Se generan varios puntos para formar una curva
-const precioMin = Math.min(precioAnterior, precioActual) * 0.7;
-const precioMax = Math.max(precioAnterior, precioActual) * 1.3;
-
-for(let p = precioMin; p <= precioMax; p += (precioMax - precioMin) / 30){
-
-    precios.push(p);
-
-    // Curva estimada de elasticidad
-    let y = clientesActual - (((p - precioActual) / precioActual) * clientesActual * 0.6);
-
-    // Evitar valores negativos
-    if(y < 0){
-        y = 0;
     }
-
-    usuarios.push(y);
-
-}
-
-Plotly.newPlot(
-
-"graficoElasticidad",
-
-[
-
-{
-
-x: precios,
-
-y: usuarios,
-
-mode: "lines",
-
-name: "Curva de Elasticidad",
-
-line:{
-
-width:5,
-
-color:"#0d6efd"
-
-}
-
-},
-
-{
-
-x:[precioAnterior, precioActual],
-
-y:[clientesAnterior, clientesActual],
-
-mode:"markers",
-
-name:"Datos Reales",
-
-marker:{
-
-size:12,
-
-color:"red"
-
-}
-
-}
-
-],
-
-{
-
-title:"Elasticidad Precio vs Suscripciones",
-
-xaxis:{
-
-title:"Precio de Suscripción"
-
-},
-
-yaxis:{
-
-title:"Suscripciones Activas"
-
-},
-
-hovermode:"closest"
-
-}
 
 );
 
