@@ -192,29 +192,17 @@ def registrarMeses(request):
             # return HttpResponseRedirect(reverse('resultados_graficos', kwargs={'mes_id': mes_actual.id}))
 
             context = {
-
-                "ingreso_historico":
-                    float(mesAnterior.precio_actual) *
-                    int(mesAnterior.sub_totales_activos),
-                "ingreso_actual":
-                    ingresos_actual,
-                "precio_historico":
-                    float(mesAnterior.precio_actual),
-                "precio_actual":
-                    Pa_actual,
-                "subs_historicas":
-                    int(mesAnterior.sub_totales_activos),
-                "subs_actuales":
-                    int(mesActual.sub_totales_activos),
-                "precio_optimo":
-                    precio_optimo,
-                "usuarios_estables":
-                    u_actual,
-                "adquisicion":
-                    adq_actual,
-                "churn":
-                    chr_actual,
-
+                
+                "ingreso_historico": float(mesAnterior.precio_actual) * int(mesAnterior.sub_totales_activos),
+                "ingreso_actual": ingresos_actual,
+                "precio_historico": float(mesAnterior.precio_actual),
+                "precio_actual": Pa_actual,
+                "subs_historicas": int(mesAnterior.sub_totales_activos),
+                "subs_actuales": int(mesActual.sub_totales_activos),
+                "precio_optimo": precio_optimo,
+                "usuarios_estables": u_actual,
+                "adquisicion": adq_actual,
+                "churn": chr_actual,
             }
 
             return render(

@@ -129,29 +129,63 @@ Resultados de la Simulación
 
 <script>
 
+// DATOS RECIBIDOS DESDE DJANGO
 
-const precioAnterior = Number(datos.precioInicialAnterior);
-const precioActual = Number(datos.precioInicialActual);
+const ingresoAnterior = parseFloat("{{ ingreso_historico|default:0 }}".replace(",", "."));
+const ingresoActual = parseFloat("{{ ingreso_actual|default:0 }}".replace(",", "."));
 
-const clientesAnterior = Number(datos.suscripcionesAnterior);
-const clientesActual = Number(datos.suscripcionesActual);
+const precioAnterior = parseFloat("{{ precio_historico|default:0 }}".replace(",", "."));
+const precioActual = parseFloat("{{ precio_actual|default:0 }}".replace(",", "."));
 
-const ingresoAnterior = precioAnterior * clientesAnterior;
-const ingresoActual = precioActual * clientesActual;
+const clientesAnterior = parseInt("{{ subs_historicas|default:0 }}");
+const clientesActual = parseInt("{{ subs_actuales|default:0 }}");
 
-const crecimiento=((ingresoActual-ingresoAnterior)/ingresoAnterior)*100;
+console.log(ingresoAnterior);
+console.log(ingresoActual);
+console.log(precioAnterior);
+console.log(precioActual);
+console.log(clientesAnterior);
+console.log(clientesActual);
 
-document.getElementById("ingresoHistorico").innerHTML="$"+ingresoAnterior.toFixed(2);
+// CALCULOS
+//
 
-document.getElementById("ingresoActual").innerHTML="$"+ingresoActual.toFixed(2);
+let crecimiento = 0;
 
-document.getElementById("crecimiento").innerHTML=crecimiento.toFixed(2)+" %";
+if (ingresoAnterior > 0){
+    crecimiento = ((ingresoActual - ingresoAnterior) / ingresoAnterior) * 100;
+}
 
-const proyeccion1=ingresoActual*1.08;
-const proyeccion2=ingresoActual*1.15;
-const proyeccion3=ingresoActual*1.22;
+//
+// TARJETAS SUPERIORES
+//
 
-new Chart(document.getElementById("graficoIngresos"),{
+document.getElementById("ingresoHistorico").innerHTML =
+"$" + ingresoAnterior.toLocaleString();
+
+document.getElementById("ingresoActual").innerHTML =
+"$" + ingresoActual.toLocaleString();
+
+document.getElementById("crecimiento").innerHTML =
+crecimiento.toFixed(2) + "%";
+
+//
+// PROYECCIONES
+//
+
+const proyeccion1 = ingresoActual * 1.08;
+const proyeccion2 = ingresoActual * 1.15;
+const proyeccion3 = ingresoActual * 1.22;
+
+//
+// GRAFICO DE INGRESOS
+//
+
+new Chart(
+
+document.getElementById("graficoIngresos"),
+
+{
 
 type:"line",
 
@@ -223,61 +257,102 @@ text:"Curva de Proyección de Ingresos"
 
 }
 
-});
+}
 
-Plotly.newPlot(
+);
 
-'graficoElasticidad',
+//
+// GRAFICO ELASTICIDAD
+//
 
-[{
+const precios = [];
+const usuarios = [];
 
-x:[
+// Se generan varios puntos para formar una curva
+const precioMin = Math.min(precioAnterior, precioActual) * 0.7;
+const precioMax = Math.max(precioAnterior, precioActual) * 1.3;
 
-precioAnterior,
+for(let p = precioMin; p <= precioMax; p += (precioMax - precioMin) / 30){
 
-precioActual
+    precios.push(p);
 
-],
+    // Curva estimada de elasticidad
+    let y = clientesActual - (((p - precioActual) / precioActual) * clientesActual * 0.6);
 
-y:[
+    // Evitar valores negativos
+    if(y < 0){
+        y = 0;
+    }
 
-clientesAnterior,
-
-clientesActual
-
-],
-
-mode:'lines+markers',
-
-line:{
-
-width:5
-
-},
-
-marker:{
-
-size:10
+    usuarios.push(y);
 
 }
 
-}],
+Plotly.newPlot(
+
+"graficoElasticidad",
+
+[
 
 {
 
-title:'Elasticidad Precio vs Suscripciones',
+x: precios,
+
+y: usuarios,
+
+mode: "lines",
+
+name: "Curva de Elasticidad",
+
+line:{
+
+width:5,
+
+color:"#0d6efd"
+
+}
+
+},
+
+{
+
+x:[precioAnterior, precioActual],
+
+y:[clientesAnterior, clientesActual],
+
+mode:"markers",
+
+name:"Datos Reales",
+
+marker:{
+
+size:12,
+
+color:"red"
+
+}
+
+}
+
+],
+
+{
+
+title:"Elasticidad Precio vs Suscripciones",
 
 xaxis:{
 
-title:'Precio'
+title:"Precio de Suscripción"
 
 },
 
 yaxis:{
 
-title:'Suscripciones Activas'
+title:"Suscripciones Activas"
 
-}
+},
+
+hovermode:"closest"
 
 }
 
