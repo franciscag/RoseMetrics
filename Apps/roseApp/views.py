@@ -21,7 +21,7 @@ from django.shortcuts import render
 
 
 def resultados(request):
-    return render(request, 'resultados.html')
+    return render(request, 'Resultados/resultados.html')
 
 # Landig page (home)
 def landingPage(request):
@@ -180,23 +180,48 @@ def registrarMeses(request):
             # guardar datos
             
             models.PrediccionMes.objects.create(
-                mes=mesActual, # mes de control
+                mes=mesActual,
                 tasa_perdida_nuevos_no_suscritos=Tpn,
                 tasa_perdida_antiguos_suscritos=Per,
                 f_adquisicion=adq_actual,
                 f_churn=chr_actual,
                 usuarios_estables=u_actual,
-                ingresos_totales=ingresos_actual,
-
-
-                precio_optimo_1derivada=precio_optimo, 
-                confirmacion_2derivada=segundaDerivada_r
+                ingresos_totales=ingresos_actual
             )
-
 
             # return HttpResponseRedirect(reverse('resultados_graficos', kwargs={'mes_id': mes_actual.id}))
 
-            return HttpResponseRedirect(request.path)
+            context = {
+
+                "ingreso_historico":
+                    float(mesAnterior.precio_actual) *
+                    int(mesAnterior.sub_totales_activos),
+                "ingreso_actual":
+                    ingresos_actual,
+                "precio_historico":
+                    float(mesAnterior.precio_actual),
+                "precio_actual":
+                    Pa_actual,
+                "subs_historicas":
+                    int(mesAnterior.sub_totales_activos),
+                "subs_actuales":
+                    int(mesActual.sub_totales_activos),
+                "precio_optimo":
+                    precio_optimo,
+                "usuarios_estables":
+                    u_actual,
+                "adquisicion":
+                    adq_actual,
+                "churn":
+                    chr_actual,
+
+            }
+
+            return render(
+                request,
+                "Resultados/resultados.html",
+                context
+            )
 
 
     else:

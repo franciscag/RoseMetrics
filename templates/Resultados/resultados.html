@@ -1,111 +1,283 @@
-<!DOCTYPE html>
-<html>
+{% extends 'Base/base_index.html' %}
 
-<head>
+{% load static %}
 
-    <title>Resultados de la simulación</title>
+{% block name_page %}
+Resultados de la Simulación
+{% endblock %}
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% block card_contenido %}
 
-    <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+<div class="container-fluid py-4">
 
-</head>
+    <div class="row">
 
-<body>
+        <div class="col-12 text-center mb-4">
 
-<h2 style="text-align:center">
-Resultados de la proyección
-</h2>
+            <h2 class="fw-bold">
+                Resultados de la Proyección
+            </h2>
 
-<div style="width:90%;margin:auto">
+            <p class="text-muted">
+                Análisis gráfico de la simulación realizada.
+            </p>
 
-    <canvas id="graficoIngresos"></canvas>
+        </div>
+
+    </div>
+
+    <div class="row text-center mb-4">
+
+        <div class="col-md-4">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <h6>Ingreso Histórico</h6>
+
+                    <h3 id="ingresoHistorico">$0</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <h6>Ingreso Actual</h6>
+
+                    <h3 id="ingresoActual">$0</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+        <div class="col-md-4">
+
+            <div class="card shadow">
+
+                <div class="card-body">
+
+                    <h6>Crecimiento</h6>
+
+                    <h3 id="crecimiento">0%</h3>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow mb-4">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                Proyección de Ingresos
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <canvas id="graficoIngresos"></canvas>
+
+        </div>
+
+    </div>
+
+    <div class="card shadow">
+
+        <div class="card-header">
+
+            <h5 class="mb-0">
+
+                Elasticidad Precio vs Suscripciones
+
+            </h5>
+
+        </div>
+
+        <div class="card-body">
+
+            <div
+                id="graficoElasticidad"
+                style="height:500px;">
+            </div>
+
+        </div>
+
+    </div>
 
 </div>
 
-<br><br>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<div
-id="graficoPlotly"
-style="width:90%;height:500px;margin:auto;">
-</div>
+<script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
 
 <script>
 
-const datos = JSON.parse(localStorage.getItem("datosProyeccion"));
 
+const precioAnterior = Number(datos.precioInicialAnterior);
+const precioActual = Number(datos.precioInicialActual);
 
-//=====================
-// CHART.JS
-//=====================
+const clientesAnterior = Number(datos.suscripcionesAnterior);
+const clientesActual = Number(datos.suscripcionesActual);
 
-const ctx = document.getElementById("graficoIngresos");
+const ingresoAnterior = precioAnterior * clientesAnterior;
+const ingresoActual = precioActual * clientesActual;
 
-new Chart(ctx,{
+const crecimiento=((ingresoActual-ingresoAnterior)/ingresoAnterior)*100;
 
-    type:"line",
+document.getElementById("ingresoHistorico").innerHTML="$"+ingresoAnterior.toFixed(2);
 
-    data:{
+document.getElementById("ingresoActual").innerHTML="$"+ingresoActual.toFixed(2);
 
-        labels:["Periodo Histórico","Periodo Actual"],
+document.getElementById("crecimiento").innerHTML=crecimiento.toFixed(2)+" %";
 
-        datasets:[{
+const proyeccion1=ingresoActual*1.08;
+const proyeccion2=ingresoActual*1.15;
+const proyeccion3=ingresoActual*1.22;
 
-            label:"Precio",
+new Chart(document.getElementById("graficoIngresos"),{
 
-            data:[
-                datos.precioInicialAnterior,
-                datos.precioInicialActual
-            ],
+type:"line",
 
-            borderWidth:3,
+data:{
 
-            fill:false
+labels:[
 
-        }]
+"Histórico",
 
-    }
+"Actual",
+
+"Proyección 1",
+
+"Proyección 2",
+
+"Proyección 3"
+
+],
+
+datasets:[{
+
+label:"Ingresos",
+
+data:[
+
+ingresoAnterior,
+
+ingresoActual,
+
+proyeccion1,
+
+proyeccion2,
+
+proyeccion3
+
+],
+
+borderWidth:4,
+
+fill:true,
+
+tension:0.4
+
+}]
+
+},
+
+options:{
+
+responsive:true,
+
+plugins:{
+
+legend:{
+
+display:true
+
+},
+
+title:{
+
+display:true,
+
+text:"Curva de Proyección de Ingresos"
+
+}
+
+}
+
+}
 
 });
 
-
-//=====================
-// PLOTLY
-//=====================
-
-var trace1 = {
-
-    x:[
-        "Histórico",
-        "Actual"
-    ],
-
-    y:[
-        datos.suscripcionesAnterior,
-        datos.suscripcionesActual
-    ],
-
-    mode:'lines+markers',
-
-    type:'scatter',
-
-    name:'Suscripciones Activas'
-
-};
-
 Plotly.newPlot(
 
-'graficoPlotly',
+'graficoElasticidad',
 
-[trace1],
+[{
+
+x:[
+
+precioAnterior,
+
+precioActual
+
+],
+
+y:[
+
+clientesAnterior,
+
+clientesActual
+
+],
+
+mode:'lines+markers',
+
+line:{
+
+width:5
+
+},
+
+marker:{
+
+size:10
+
+}
+
+}],
 
 {
 
-title:'Comparación de Suscripciones',
+title:'Elasticidad Precio vs Suscripciones',
 
-xaxis:{title:'Periodo'},
+xaxis:{
 
-yaxis:{title:'Cantidad'}
+title:'Precio'
+
+},
+
+yaxis:{
+
+title:'Suscripciones Activas'
+
+}
 
 }
 
@@ -113,5 +285,4 @@ yaxis:{title:'Cantidad'}
 
 </script>
 
-</body>
-</html>
+{% endblock %}
